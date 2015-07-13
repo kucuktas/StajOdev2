@@ -1,16 +1,17 @@
 package com.levent.client;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class RehberImpl implements Rehber {
 
-	private static int ARRAY_LIST_SIZE = 10;
-	private ArrayList<User> rehber = new ArrayList<User>( ARRAY_LIST_SIZE );
+	// private static int ARRAY_LIST_SIZE = 10;
+	private List<User> rehber = new LinkedList<User>();
 
 	public RehberImpl( ) {
-		while ( ( rehber.size() < ARRAY_LIST_SIZE ) ) {
-			rehber.add( null );
-		}
+		// while ( ( rehber.size() < ARRAY_LIST_SIZE ) ) {
+		// rehber.add( null );
+		// }
 		System.out.printf( "Rehber olusturuldu\n" );
 	}
 
@@ -18,10 +19,13 @@ public class RehberImpl implements Rehber {
 	public void printUser( int userId ) {
 
 		// check if the rehber is populated
-		if ( !rehber.isEmpty() ) {
-			System.out.printf( rehber.get( userId ).toString() );
-		}
+		for ( int i = 0; i < rehber.size(); i++ ) {
 
+			if ( rehber.get( i ).getId() == userId ) {
+				System.out.printf( rehber.get( i ).toString() );
+				return;
+			}
+		}
 	}
 
 	@Override
@@ -45,51 +49,60 @@ public class RehberImpl implements Rehber {
 	@Override
 	public void insertUser( User user ) {
 
-		// check if the specific ID is empty in the ArrayList
-		if ( rehber.get( user.getId() ) == null ) {
+		for ( int i = 0; i < rehber.size(); i++ ) {
 
-			rehber.add( user.getId(), user );
-			System.out.printf( "%s %s added to the index %d\n", user.getName(), user.getSurname(), user.getId() );
+			if ( rehber.get( i ).getId() == user.getId() ) {
+				System.out.printf( "There is already userId: %d in the list\n", user.getId() );
+				return;
+			}
 		}
-		else
-			System.out.printf( "Rehberin bu indexi dolu\n\n" );
+		rehber.add( user );
+		System.out.printf( "Inserted userId: %d: %s %s to the list\n", user.getId(), user.getName(),
+				user.getSurname() );
 	}
 
 	@Override
 	public User findUser( int userId ) {
-		User user = new User();
-
 		// check if the specific ID is populated in the ArrayList
-		if ( rehber.get( userId ) != null ) {
-			user = rehber.get( userId );
-			return user;
+		for ( int i = 0; i < rehber.size(); i++ ) {
+
+			if ( rehber.get( i ).getId() == userId ) {
+				User user = rehber.get( i );
+				System.out.printf( "Found userId: %d at index: %d\n", userId, i );
+				return user;
+			}
 		}
-		else {
-			System.out.printf( "Rehberin bu indexi bos (findUser)\n\n" );
-			return null;
-		}
+		System.out.printf( "Rehberde boyle biri yok (findUser)\n\n" );
+		return null;
 	}
 
 	@Override
 	public void modifyUser( User user ) {
 		// check if ID matches the index of the ArrayList and that specific
 		// index is populated
-		if ( rehber.get( user.getId() ) != null && user.getId() == rehber.indexOf( user ) ) {
-			rehber.remove( user.getId() );
-			rehber.add( user.getId(), user );
-			System.out.printf( "%s %s modified at the index %d\n", user.getName(), user.getSurname(), user.getId() );
+		for ( int i = 0; i < rehber.size(); i++ ) {
+			if ( rehber.get( i ).getId() == user.getId() ) {
+				rehber.remove( i );
+				rehber.add( i, user );
+				System.out.printf( "%s %s modified at the index %d\n", user.getName(), user.getSurname(),
+						user.getId() );
+				return;
+			}
 		}
-		else
-			System.out.printf( "Rehberin bu indexi bos (modifyUser)" );
-
+		System.out.printf( "Rehberin bu indexi bos (modifyUser)\n" );
 	}
 
 	@Override
 	public void deleteUser( int userId ) {
 		// check if the specific ID is populated in the ArrayList
-		if ( rehber.get( userId ) != null ) {
-			rehber.remove( userId );
+		for ( int i = 0; i < rehber.size(); i++ ) {
+			if ( rehber.get( i ).getId() == userId ) {
+				rehber.remove( i );
+				System.out.printf( "Removed userId: %d from index: %d\n", userId, i );
+				return;
+			}
 		}
+		System.out.printf( "userId: %d doesn't exist in rehber\n", userId );
 	}
 
 }
